@@ -1,10 +1,13 @@
 
 #include <gloperate-qtapplication/Mapping.h>
 
+#include <QDebug>
 #include <QTimer>
 #include <QToolTip>
 
 #include <glbinding/gl/enum.h>
+
+#include <globjects/base/File.h>
 
 #include <gloperate/base/make_unique.hpp>
 #include <gloperate/base/RenderTargetType.h>
@@ -159,6 +162,10 @@ void Mapping::mapKeyboardEvent(KeyboardEvent * event)
             break;
         case KeyRight:
             m_navigation->rotate(glm::radians(-10.0f), 0.0f);
+            break;
+        case KeyF5:
+            qDebug() << "Reloading shaders";
+            globjects::File::reloadAll();
             break;
         default:
             break;
