@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 
@@ -68,7 +69,7 @@ public:
 
     void setNearFar(float zNear, float zFar);
 
-    void draw();
+    void draw(const glm::vec2 & subpixelShift = glm::vec2());
 
 private:
     void setupGridLineBuffer(unsigned short segments);

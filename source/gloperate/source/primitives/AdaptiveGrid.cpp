@@ -37,6 +37,7 @@ const char * vsSource = R"(
 
 uniform mat4 transform;
 uniform vec2 viewPlaneDistance;
+uniform vec2 subpixelShift;
 
 layout (location = 0) in vec4 a_vertex;
 
@@ -49,6 +50,10 @@ void main()
     float t = a_vertex.w;
 
     vec4 vertex = transform * vec4(a_vertex.xyz, 1.0);
+    vertex.xy /= vertex.w;
+    vertex.xy += subpixelShift * 2.0;
+    vertex.xy *= vertex.w;
+
     v_vertex = vertex.xyz;
 
     // interpolate minor grid lines alpha based on viewPlaneDistance
@@ -264,7 +269,7 @@ void AdaptiveGrid::update(
     m_program->setUniform("transform", modelViewProjection * offset);
 } 
 
-void AdaptiveGrid::draw()
+void AdaptiveGrid::draw(const glm::vec2 & subpixelShift)
 {
     gl::glBlendFunc(gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA);
 
@@ -274,6 +279,7 @@ void AdaptiveGrid::draw()
 
 
     m_program->use();
+    m_program->setUniform("subpixelShift", subpixelShift);
 
     m_vao->bind();
     m_vao->drawArrays(gl::GL_LINES, 0, m_size);
