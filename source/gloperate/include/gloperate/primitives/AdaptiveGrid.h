@@ -69,7 +69,7 @@ public:
 
     void setNearFar(float zNear, float zFar);
 
-    void draw(const glm::vec2 & subpixelShift = glm::vec2());
+    void draw(const glm::vec2 & subpixelShift = glm::vec2(), float focalPlane = 1.0f, const glm::vec2 & shearingFactor = glm::vec2());
 
 private:
     void setupGridLineBuffer(unsigned short segments);

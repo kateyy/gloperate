@@ -35,9 +35,12 @@ const char * vsSource = R"(
 #version 140
 #extension GL_ARB_explicit_attrib_location : require
 
-uniform mat4 transform;
+uniform mat4 modelView;
+uniform mat4 projection;
 uniform vec2 viewPlaneDistance;
 uniform vec2 subpixelShift;
+uniform float focalPlane;
+uniform vec2 shearingFactor;
 
 layout (location = 0) in vec4 a_vertex;
 
@@ -49,7 +52,10 @@ void main()
     float m = 1.0 - viewPlaneDistance[1];
     float t = a_vertex.w;
 
-    vec4 vertex = transform * vec4(a_vertex.xyz, 1.0);
+    vec4 posView = modelView * vec4(a_vertex.xyz, 1.0);
+    posView.xy += shearingFactor * (posView.z + focalPlane);
+
+    vec4 vertex = projection * posView;
     vertex.xy /= vertex.w;
     vertex.xy += subpixelShift * 2.0;
     vertex.xy *= vertex.w;
@@ -266,10 +272,11 @@ void AdaptiveGrid::update(
     const mat4 offset = translate(irounded) * scale(vec3(viewPlaneDistance));
 
     m_program->setUniform("viewPlaneDistance",  vec2(l, mod(distancelog, 1.f)));
-    m_program->setUniform("transform", modelViewProjection * offset);
+    m_program->setUniform("modelView", m_camera->view() * offset);
+    m_program->setUniform("projection", m_camera->projection());
 } 
 
-void AdaptiveGrid::draw(const glm::vec2 & subpixelShift)
+void AdaptiveGrid::draw(const glm::vec2 & subpixelShift, float focalPlane, const glm::vec2 & shearingFactor)
 {
     gl::glBlendFunc(gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA);
 
@@ -280,6 +287,8 @@ void AdaptiveGrid::draw(const glm::vec2 & subpixelShift)
 
     m_program->use();
     m_program->setUniform("subpixelShift", subpixelShift);
+    m_program->setUniform("focalPlane", focalPlane);
+    m_program->setUniform("shearingFactor", shearingFactor);
 
     m_vao->bind();
     m_vao->drawArrays(gl::GL_LINES, 0, m_size);
