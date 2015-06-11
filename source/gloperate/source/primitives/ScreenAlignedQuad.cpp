@@ -25,9 +25,8 @@ namespace gloperate
 
 const char * ScreenAlignedQuad::s_defaultVertexShaderSource = R"(
 #version 140
-#extension GL_ARB_explicit_attrib_location : require
 
-layout (location = 0) in vec2 a_vertex;
+in vec2 a_vertex;
 out vec2 v_uv;
 
 void main()
@@ -39,11 +38,10 @@ void main()
 
 const char* ScreenAlignedQuad::s_defaultFagmentShaderSource = R"(
 #version 140
-#extension GL_ARB_explicit_attrib_location : require
 
 uniform sampler2D source;
 
-layout (location = 0) out vec4 fragColor;
+out vec4 fragColor;
 
 in vec2 v_uv;
 

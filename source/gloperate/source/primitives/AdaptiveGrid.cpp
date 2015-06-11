@@ -33,7 +33,6 @@ namespace
 const char * vsSource = R"(
 
 #version 140
-#extension GL_ARB_explicit_attrib_location : require
 
 uniform mat4 modelView;
 uniform mat4 projection;
@@ -42,7 +41,7 @@ uniform vec2 subpixelShift;
 uniform float focalPlane;
 uniform vec2 shearingFactor;
 
-layout (location = 0) in vec4 a_vertex;
+in vec4 a_vertex;
 
 flat out float v_type;
 out vec3 v_vertex;
@@ -73,7 +72,6 @@ void main()
 const char * fsSource = R"(
 
 #version 140
-#extension GL_ARB_explicit_attrib_location : require
 
 uniform vec2 viewPlaneDistance;
 
@@ -84,7 +82,7 @@ uniform vec3 color;
 flat in float v_type;
 in vec3 v_vertex;
 
-layout (location = 0) out vec4 fragColor;
+out vec4 fragColor;
 
 void main()
 {
