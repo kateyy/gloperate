@@ -65,7 +65,8 @@ public:
 
     void update(
         const glm::vec3 & viewpoint
-    ,   const glm::mat4 & modelViewProjection);
+    ,   const glm::mat4 & modelView
+    ,   const glm::mat4 & projection);
 
     void setNearFar(float zNear, float zFar);
 

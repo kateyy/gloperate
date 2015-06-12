@@ -230,12 +230,13 @@ void AdaptiveGrid::update()
         return;
 
     setNearFar(m_camera->zNear(), m_camera->zFar());
-    update(m_camera->eye(), m_camera->viewProjection());
+    update(m_camera->eye(), m_camera->view(), m_camera->projection());
 }
 
 void AdaptiveGrid::update(
     const vec3 & viewpoint
-,   const mat4 & modelViewProjection)
+,   const mat4 & modelView
+,   const mat4  & projection)
 {
     // Project the camera's eye position onto the grid plane.
     bool intersects; //  should always intersect.
@@ -270,8 +271,8 @@ void AdaptiveGrid::update(
     const mat4 offset = translate(irounded) * scale(vec3(viewPlaneDistance));
 
     m_program->setUniform("viewPlaneDistance",  vec2(l, mod(distancelog, 1.f)));
-    m_program->setUniform("modelView", m_camera->view() * offset);
-    m_program->setUniform("projection", m_camera->projection());
+    m_program->setUniform("modelView", modelView * offset);
+    m_program->setUniform("projection", projection);
 } 
 
 void AdaptiveGrid::draw(const glm::vec2 & subpixelShift, float focalPlane, const glm::vec2 & shearingFactor)
