@@ -111,6 +111,7 @@ GenericPathTracingStage::GenericPathTracingStage(const std::map<std::string, std
 {
     addInput("viewport", viewport);
     addInput("camera", camera);
+    addInput("projection", projection);
     addOptionalInput("coarseSamplingWindowSize", coarseSamplingWindowSize);
     addOptionalInput("coarseEnd", coarseEnd);
     addOptionalInput("maxRayDepth", maxRayDepth);

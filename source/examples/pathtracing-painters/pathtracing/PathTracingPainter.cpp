@@ -23,6 +23,8 @@ PathTracingPainter::PathTracingPainter(gloperate::ResourceManager & resourceMana
     m_pipeline.projection.setData(m_projection);
     m_pipeline.renderTargets.setData(renderTargets);
 
+    m_camera->changed.connect([this]() { m_pipeline.camera.invalidate(); });
+    m_projection->changed.connect([this]() { m_pipeline.projection.invalidate(); });
     targetFBO->changed.connect([this]() { m_pipeline.targetFBO.invalidate(); });
     viewport->changed.connect([this]() { m_pipeline.viewport.invalidate(); });
 }
@@ -36,7 +38,7 @@ void PathTracingPainter::onInitialize()
     m_camera->setCenter(cornellCenter);
     m_camera->setEye(glm::vec3(cornellCenter.x, cornellCenter.y, -cornellCenter.z));
     m_camera->setUp(glm::vec3(0.0f, 1.0, 0.0f));
-    m_projection->setZNear(0.01f);
-    m_projection->setZFar(2000.0f);
+    m_projection->setZNear(1.f);
+    m_projection->setZFar(1000.0f);
 
 }

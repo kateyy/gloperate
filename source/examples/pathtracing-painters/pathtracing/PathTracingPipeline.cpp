@@ -5,6 +5,7 @@
 #include <glbinding/gl/functions.h>
 
 #include <globjects/Framebuffer.h>
+#include <globjects/Texture.h>
 
 #include <gloperate/painter/AbstractTargetFramebufferCapability.h>
 #include <gloperate/primitives/ScreenAlignedQuad.h>
@@ -12,6 +13,26 @@
 
 
 using namespace gl;
+
+namespace
+{
+
+const char* s_blitFragmentShader = R"(
+#version 140
+
+uniform sampler2D colorTexture;
+uniform sampler2D depthTexture;
+
+out vec4 fragColor;
+
+in vec2 v_uv;
+
+void main()
+{
+    fragColor = texture(colorTexture, v_uv);
+    gl_FragDepth = texture(depthTexture, v_uv).x;
+}
+)";
 
 class BlitStage : public gloperate::AbstractStage
 {
@@ -21,7 +42,7 @@ public:
     {
         addInput("targetFBO", targetFramebuffer);
         addInput("color", color);
-        //addInput("normal", normal);
+        addInput("depth", depth);
 
         alwaysProcess(true);
     }
@@ -30,12 +51,17 @@ public:
 
     virtual void initialize() override
     {
-        m_quad = globjects::make_ref<gloperate::ScreenAlignedQuad>(color.data());
+        globjects::ref_ptr<globjects::Shader> fragmentShader = globjects::Shader::fromString(GL_FRAGMENT_SHADER, s_blitFragmentShader);
+
+        m_quad = globjects::make_ref<gloperate::ScreenAlignedQuad>(fragmentShader);
+        m_quad->program()->setUniform("colorTexture", 0);
+        m_quad->program()->setUniform("depthTexture", 1);
     }
 
     gloperate::InputSlot<gloperate::AbstractTargetFramebufferCapability * > targetFramebuffer;
 
     gloperate::InputSlot<globjects::ref_ptr<globjects::Texture>> color;
+    gloperate::InputSlot<globjects::ref_ptr<globjects::Texture>> depth;
 
 protected:
     virtual void process() override
@@ -51,7 +77,13 @@ protected:
             fbo->setDrawBuffers({ GL_COLOR_ATTACHMENT0 });
         }
 
+        color.data()->bindActive(GL_TEXTURE0);
+        depth.data()->bindActive(GL_TEXTURE1);
+
         m_quad->draw();
+
+        color.data()->unbindActive(GL_TEXTURE0);
+        depth.data()->unbindActive(GL_TEXTURE1);
 
         globjects::Framebuffer::defaultFBO()->bind(GL_FRAMEBUFFER);
 
@@ -60,6 +92,8 @@ protected:
 protected:
     globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_quad;
 };
+
+}
 
 PathTracingPipeline::PathTracingPipeline()
 {
@@ -71,8 +105,8 @@ PathTracingPipeline::PathTracingPipeline()
     pathTracingStage->projection = projection;
 
     blitStage->color = pathTracingStage->colorTexture;
+    blitStage->depth = pathTracingStage->depthTexture;
     blitStage->targetFramebuffer = targetFBO;
-
 
     addStages(
         pathTracingStage,

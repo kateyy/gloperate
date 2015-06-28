@@ -48,13 +48,24 @@ Ray Camera_ray(in Camera camera, in vec2 normalizedCoords)
 	);
 }
 
-float Camera_depth(in Camera camera, in float d)
+float linearize(float zNear, float zFar, float depth) {
+    // d = (2.0 * zfar * znear / (zfar + znear - (zfar - znear) * (2.0 * z- 1.0)));
+    // normalized to [0,1]
+    // d = (d - znear) / (zfar - znear);
+
+    // simplyfied with wolfram alpha
+    return - zNear * depth / (zFar * depth - zFar - zNear * depth);
+}
+
+float Camera_depth(in Camera camera, in float dist)
 {
 	//- znear * depth / (zfar * depth - zfar - znear * depth);
 	//~ float a = (d-camera.zNear)/(camera.zFar-camera.zNear);
-	float depth = (camera.zFar-camera.zNear*camera.zFar/d)/(camera.zFar-camera.zNear);
-	
-	return depth;
+	// float depth = (camera.zFar-camera.zNear*camera.zFar/d)/(camera.zFar-camera.zNear);
+    
+    float depth = (dist - camera.zNear) / (camera.zFar - camera.zNear);
+    return depth;
+    // return linearize(camera.zNear, camera.zFar, depth);
 }
 
 #endif
