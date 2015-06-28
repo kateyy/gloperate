@@ -66,5 +66,25 @@ void PolygonalGeometry::setNormals(std::vector<glm::vec3> && normals)
     m_normals = std::move(normals);
 }
 
+bool PolygonalGeometry::hasTexCoords() const
+{
+    return !m_texCoords.empty();
+}
+
+const std::vector<glm::vec2> & PolygonalGeometry::texCoords() const
+{
+    return m_texCoords;
+}
+
+void PolygonalGeometry::setTexCoords(const std::vector<glm::vec2> & texCoords)
+{
+    m_texCoords = texCoords;
+}
+
+void PolygonalGeometry::setTexCoords(std::vector<glm::vec2> && texCoords)
+{
+    m_texCoords = std::move(texCoords);
+}
+
 
 } // namespace gloperate

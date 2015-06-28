@@ -178,6 +178,17 @@ PolygonalGeometry * AssimpSceneLoader::convertGeometry(const aiMesh * mesh) cons
         geometry->setNormals(std::move(normals));
     }
 
+    if (mesh->HasTextureCoords(0))
+    {
+        auto texCoords = std::vector<glm::vec2>{};
+        for (auto i = 0u; i < mesh->mNumVertices; ++i)
+        {
+            const auto & texCoord = mesh->mTextureCoords[0][i];
+            texCoords.push_back({ texCoord.x, texCoord.y });
+        }
+        geometry->setTexCoords(std::move(texCoords));
+    }
+
     // Return geometry
     return geometry;
 }

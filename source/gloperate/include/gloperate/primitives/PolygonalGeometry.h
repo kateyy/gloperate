@@ -126,11 +126,18 @@ public:
     */
     void setNormals(std::vector<glm::vec3> && normals);
 
+    bool hasTexCoords() const;
+    const std::vector<glm::vec2> & texCoords() const;
+
+    void setTexCoords(const std::vector<glm::vec2> & texCoords);
+    void setTexCoords(std::vector<glm::vec2> && texCoords);
+
 
 protected:
     std::vector<unsigned int> m_indices;    /**< Index array */
     std::vector<glm::vec3>    m_vertices;   /**< Vertex array */
     std::vector<glm::vec3>    m_normals;    /**< Normal array */
+    std::vector<glm::vec2> m_texCoords;
 };
 
 

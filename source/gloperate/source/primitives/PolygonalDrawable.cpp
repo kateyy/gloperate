@@ -41,6 +41,12 @@ PolygonalDrawable::PolygonalDrawable(const PolygonalGeometry & geometry)
         m_normals->setData(geometry.normals(), GL_STATIC_DRAW);
     }
 
+    if (geometry.hasTexCoords())
+    {
+        m_texCoords = new globjects::Buffer{};
+        m_texCoords->setData(geometry.texCoords(), GL_STATIC_DRAW);
+    }
+
     // Create vertex array object
     m_vao = new globjects::VertexArray;
     m_vao->bind();
@@ -60,6 +66,15 @@ PolygonalDrawable::PolygonalDrawable(const PolygonalGeometry & geometry)
         vertexBinding->setBuffer(m_normals, 0, sizeof(glm::vec3));
         vertexBinding->setFormat(3, gl::GL_FLOAT, GL_TRUE);
         m_vao->enable(1);
+    }
+
+    if (geometry.hasTexCoords())
+    {
+        auto vertexBinding = m_vao->binding(2);
+        vertexBinding->setAttribute(2);
+        vertexBinding->setBuffer(m_texCoords, 0, sizeof(glm::vec2));
+        vertexBinding->setFormat(2, gl::GL_FLOAT, GL_TRUE);
+        m_vao->enable(2);
     }
 
     m_vao->unbind();

@@ -68,6 +68,7 @@ protected:
     globjects::ref_ptr<globjects::Buffer>      m_indices;   /**< Index buffer */
     globjects::ref_ptr<globjects::Buffer>      m_vertices;  /**< Vertex buffer */
     globjects::ref_ptr<globjects::Buffer>      m_normals;   /**< Normal buffer (may be empty) */
+    globjects::ref_ptr<globjects::Buffer>      m_texCoords;
     gl::GLsizei                                m_size;      /**< Number of elements (m_indices) */
 };
 
