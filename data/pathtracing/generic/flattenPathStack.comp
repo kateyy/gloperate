@@ -19,7 +19,7 @@ uniform uvec2 layerSize;
 uniform uint layerStride;
 
 
-layout (binding = 0, rgba8) uniform image2D colorTexture;
+layout (binding = 0, rgba32f) uniform image2D colorTexture;
 
 
 void main()

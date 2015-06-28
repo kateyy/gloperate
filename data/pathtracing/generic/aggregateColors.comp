@@ -6,8 +6,8 @@ layout (local_size_x = 16, local_size_y = 16) in;
 #include </data/pathtracing/generic/sampling.glsl>
 
 
-layout (binding = 0, rgba8) uniform image2D perFrameColorTexture;
-layout (binding = 1, rgba8) uniform image2D aggregatedColorTexture;
+layout (binding = 0, rgba32f) uniform image2D perFrameColorTexture;
+layout (binding = 1, rgba32f) uniform image2D aggregatedColorTexture;
 
 uniform uvec2 layerSize;
 uniform uint frameCounter;

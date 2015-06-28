@@ -325,7 +325,7 @@ void GenericPathTracingStage::flattenPath(gl::GLuint numStackLayers)
 {
     glm::uvec3 workGroupCount(glm::ceil(glm::vec3(m_pathStackLayerExtent, 1) / glm::vec3(s_workGroupSize)));
 
-    colorPerFrameTexture.data()->bindImageTexture(0, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+    colorPerFrameTexture.data()->bindImageTexture(0, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
     bindPathStack(1);
 
@@ -344,8 +344,8 @@ void GenericPathTracingStage::aggregateColors()
 {
     glm::uvec3 workGroupCount(glm::ceil(glm::vec3(m_pathStackLayerExtent, 1) / glm::vec3(s_workGroupSize)));
 
-    colorPerFrameTexture.data()->bindImageTexture(0, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-    colorTexture.data()->bindImageTexture(1, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8);
+    colorPerFrameTexture.data()->bindImageTexture(0, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+    colorTexture.data()->bindImageTexture(1, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 
     m_aggregateColorsProgram->setUniform("layerSize", m_pathStackLayerExtent);
 
@@ -616,9 +616,9 @@ void GenericPathTracingStage::setupTextures()
 
 void GenericPathTracingStage::clearTextures(const glm::ivec2 & size)
 {
-    glm::u8vec4 u8White{ 0xFF, 0xFF, 0xFF, 0xFF };
-    colorTexture.data()->clearImage(0, GL_RGBA, GL_UNSIGNED_BYTE, &u8White);
-    colorPerFrameTexture.data()->clearImage(0, GL_RGBA, GL_UNSIGNED_BYTE, &u8White);
+    glm::vec4 f32White{ 1.0f, 1.0f, 1.0f, 1.0f };
+    colorTexture.data()->clearImage(0, GL_RGBA, GL_FLOAT, &f32White);
+    colorPerFrameTexture.data()->clearImage(0, GL_RGBA, GL_FLOAT, &f32White);
     depthTexture.data()->clearImage(0, GL_RED, GL_FLOAT, nullptr);
     normalTexture.data()->clearImage(0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
@@ -627,8 +627,8 @@ void GenericPathTracingStage::clearTextures(const glm::ivec2 & size)
 
 void GenericPathTracingStage::resizeTextures(const glm::ivec2 & size)
 {
-    colorTexture.data()->image2D(0, GL_RGBA8, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    colorPerFrameTexture.data()->image2D(0, GL_RGBA8, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    colorTexture.data()->image2D(0, GL_RGBA32F, size, 0, GL_RGBA, GL_FLOAT, nullptr);
+    colorPerFrameTexture.data()->image2D(0, GL_RGBA32F, size, 0, GL_RGBA, GL_FLOAT, nullptr);
     depthTexture.data()->image2D(0, GL_R32F, size, 0, GL_RED, GL_FLOAT, nullptr);
     normalTexture.data()->image2D(0, GL_RGBA8, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
