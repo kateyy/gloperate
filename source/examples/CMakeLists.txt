@@ -2,6 +2,7 @@ if(OPTION_BUILD_EXAMPLES)
     
     # Example plugins
     add_subdirectory(globjects-painters)
+    add_subdirectory(pathtracing-painters)
     add_subdirectory(pipeline-painters)
     add_subdirectory(osg-painters)
 

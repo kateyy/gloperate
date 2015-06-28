@@ -2,5 +2,7 @@
 !.gitignore
 !cubescape/*
 !osg-scene/*
+!pathtracing
+!pathtracing/**
 !postprocessing/*
 !emplem-important.png
