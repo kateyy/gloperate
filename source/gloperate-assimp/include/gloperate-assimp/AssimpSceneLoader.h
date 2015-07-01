@@ -48,7 +48,6 @@ public:
     virtual gloperate::Scene * load(const std::string & filename, std::function<void(int, int)> progress) const override;
 
 
-protected:
     /**
     *  @brief
     *    Convert an ASSIMP scene into a gloperate scene
@@ -61,6 +60,7 @@ protected:
     */
     gloperate::Scene * convertScene(const aiScene * scene) const;
 
+protected:
     /**
     *  @brief
     *    Convert ASSIMP mesh into gloperate mesh
