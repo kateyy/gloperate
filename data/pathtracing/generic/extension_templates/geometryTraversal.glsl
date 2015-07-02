@@ -1,7 +1,7 @@
 
-#include </data/pathtracing/generic/dataTypes.glsl>
-#include </data/pathtracing/generic/intersectionPrimitives.glsl>
-#include </data/pathtracing/generic/ray.glsl>
+#include </pathtracing/generic/dataTypes.glsl>
+#include </pathtracing/generic/intersectionPrimitives.glsl>
+#include </pathtracing/generic/ray.glsl>
 
 const int numTriangles = 34;
 

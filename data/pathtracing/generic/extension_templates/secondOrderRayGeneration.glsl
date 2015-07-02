@@ -1,8 +1,8 @@
 #ifndef SECONDORDERRAYGENERATION
 #define SECONDORDERRAYGENERATION
 
-#include </data/pathtracing/generic/dataTypes.glsl>
-#include </data/pathtracing/generic/random.glsl>
+#include </pathtracing/generic/dataTypes.glsl>
+#include </pathtracing/generic/random.glsl>
 
 
 void generateSecondOrderRay(in Ray lastRay, inout RayIntersection intersection)

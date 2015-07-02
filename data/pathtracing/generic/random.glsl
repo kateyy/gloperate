@@ -1,7 +1,7 @@
 #ifndef RANDOM
 #define RANDOM
 
-#include </data/pathtracing/generic/hash.glsl>
+#include </pathtracing/generic/hash.glsl>
 
 layout (location = 10) uniform vec2 randomOffset;
 layout (binding = 2) uniform isampler1D randomIndexTexture;

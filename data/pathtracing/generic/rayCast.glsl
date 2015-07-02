@@ -1,7 +1,7 @@
 #ifndef RAYCAST
 #define RAYCAST
 
-#include </data/pathtracing/generic/dataTypes.glsl>
+#include </pathtracing/generic/dataTypes.glsl>
 
 #include </PATHTRACING_EXTENSIONS/geometryTraversal>
 #include </PATHTRACING_EXTENSIONS/secondOrderRayGeneration>

@@ -32,7 +32,6 @@ using widgetzeug::make_unique;
 
 namespace
 {
-const std::string s_shader_path = "data/pathtracing/generic/";
 const std::string s_ext_namespace = "/PATHTRACING_EXTENSIONS/";
 const std::vector<std::string> s_extensions{
     "rayCastingOutput", "materials",
@@ -99,6 +98,7 @@ const glm::uvec3 GenericPathTracingStage::s_workGroupSize{ 16, 16, 1 };
 
 GenericPathTracingStage::GenericPathTracingStage(const std::map<std::string, std::string> & namedExtensionShaderFiles)
     : gloperate::AbstractStage()
+    , m_shaderFilesRootDir("data")
     , m_namedExtensionShaders(namedExtensionShaderFiles)
     , m_sceneChanged(true)
     , m_frameCounter(0)
@@ -123,9 +123,19 @@ GenericPathTracingStage::GenericPathTracingStage(const std::map<std::string, std
 
 GenericPathTracingStage::~GenericPathTracingStage() = default;
 
+void GenericPathTracingStage::setShaderFilesRootDir(const std::string & dir)
+{
+    m_shaderFilesRootDir = dir;
+}
+
+const std::string & GenericPathTracingStage::shaderFilesRootDir() const
+{
+    return m_shaderFilesRootDir;
+}
+
 void GenericPathTracingStage::initialize()
 {
-    gloperate::scanDirectory(s_shader_path.substr(0, s_shader_path.length() - 1), "glsl", true);
+    gloperate::scanDirectory(m_shaderFilesRootDir, "/pathtracing", "glsl", true);
 
     initializeExtensionShaders();
     loadShaders();
@@ -492,24 +502,26 @@ GLuint GenericPathTracingStage::getRayCounter()
 
 void GenericPathTracingStage::loadShaders()
 {
+    auto genericShadersDir = m_shaderFilesRootDir + "/pathtracing/generic/";
+
     m_firstOrderRayProgram = new globjects::Program();
     m_firstOrderRayProgram->setName("First Order Ray Program");
     m_firstOrderRayProgram->attach(globjects::Shader::fromFile(
-        GL_COMPUTE_SHADER, s_shader_path + "firstOrderRays.comp"));
+        GL_COMPUTE_SHADER, genericShadersDir + "firstOrderRays.comp"));
 
     m_firstOrderRayProgram->link();
 
     m_secondOrderRayProgram = new globjects::Program();
     m_secondOrderRayProgram->setName("Second Order Ray Program");
     m_secondOrderRayProgram->attach(globjects::Shader::fromFile(
-        GL_COMPUTE_SHADER, s_shader_path + "secondOrderRays.comp"));
+        GL_COMPUTE_SHADER, genericShadersDir + "secondOrderRays.comp"));
 
     m_secondOrderRayProgram->link();
 
     m_shadowRayProgram = new globjects::Program();
     m_shadowRayProgram->setName("Shadow Ray Program");
     m_shadowRayProgram->attach(globjects::Shader::fromFile(
-        GL_COMPUTE_SHADER, s_shader_path + "shadowRays.comp"));
+        GL_COMPUTE_SHADER, genericShadersDir + "shadowRays.comp"));
 
     m_shadowRayProgram->link();
 
@@ -517,7 +529,7 @@ void GenericPathTracingStage::loadShaders()
     m_clearPathStackProgram = new globjects::Program();
     m_clearPathStackProgram->setName("Clear Path Stack Program");
     m_clearPathStackProgram->attach(globjects::Shader::fromFile(
-        GL_COMPUTE_SHADER, s_shader_path + "clearPathStack.comp"));
+        GL_COMPUTE_SHADER, genericShadersDir + "clearPathStack.comp"));
 
     m_clearPathStackProgram->link();
 
@@ -525,14 +537,14 @@ void GenericPathTracingStage::loadShaders()
     m_flattenPathStackProgram = new globjects::Program();
     m_flattenPathStackProgram->setName("Flatten Path Stack Program");
     m_flattenPathStackProgram->attach(globjects::Shader::fromFile(
-        GL_COMPUTE_SHADER, s_shader_path + "flattenPathStack.comp"));
+        GL_COMPUTE_SHADER, genericShadersDir + "flattenPathStack.comp"));
 
     m_flattenPathStackProgram->link();
 
     m_aggregateColorsProgram = new globjects::Program();
     m_aggregateColorsProgram->setName("Color Aggregation Program");
     m_aggregateColorsProgram->attach(globjects::Shader::fromFile(
-        GL_COMPUTE_SHADER, s_shader_path + "aggregateColors.comp"));
+        GL_COMPUTE_SHADER, genericShadersDir + "aggregateColors.comp"));
 
     m_aggregateColorsProgram->link();
 }
@@ -552,10 +564,12 @@ void GenericPathTracingStage::initializeExtensionShaders()
     // render testing data only if geometry not defined by the user
     m_useTestingData = m_namedExtensionShaders.find("geometryTraversal") == m_namedExtensionShaders.end();
 
+    auto templateShadersDir = m_shaderFilesRootDir + "/pathtracing/generic/extension_templates/";
+
     // load templates for not implemented extensions
     for (const std::string & ext : extensionNames())
     {
-        std::string fileName = s_shader_path + "extension_templates/" + ext + ".glsl";
+        std::string fileName = templateShadersDir + ext + ".glsl";
         assert(std::ifstream(fileName).good());
         if (!globjects::NamedString::isNamedString(s_ext_namespace + ext))
             globjects::NamedString::create(s_ext_namespace + ext,

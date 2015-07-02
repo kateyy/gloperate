@@ -1,7 +1,7 @@
 #ifndef BOX
 #define BOX
 
-#include </data/pathtracing/generic/ray.glsl>
+#include </pathtracing/generic/ray.glsl>
 
 struct Box
 {

@@ -1,7 +1,7 @@
 #ifndef DATATYPES
 #define DATATYPES
 
-#include </data/pathtracing/generic/ray.glsl>
+#include </pathtracing/generic/ray.glsl>
 
 uint pixelCoordsToIndex(in ivec2 coords, in ivec2 size)
 {

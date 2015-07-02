@@ -1,7 +1,7 @@
 #ifndef CAMERA
 #define CAMERA
 
-#include </data/pathtracing/generic/ray.glsl>
+#include </pathtracing/generic/ray.glsl>
 
 struct Camera
 {

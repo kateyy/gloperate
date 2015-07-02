@@ -6,6 +6,7 @@
 #include <globjects/NamedString.h>
 
 #ifdef _MSC_VER
+#define NOMINMAX
 #include "windows.h"
 #include "dirent_msvc.h"
 #else
@@ -109,6 +110,33 @@ void scanDirectory(const std::string & directory, const std::string & fileExtens
             continue;
 
         NamedString::create("/"+file, new File(file));
+    }
+}
+
+void scanDirectory(
+    std::string baseDirectory,
+    std::string includeSubdirectory, 
+    const std::string & fileExtension,
+    bool recursive)
+{
+    if (!baseDirectory.empty() && (baseDirectory[baseDirectory.size() - 1] == '/'))
+        baseDirectory = baseDirectory.substr(0, baseDirectory.size() - 1);
+
+    if (!includeSubdirectory.empty() && (includeSubdirectory[0] == '/'))
+        includeSubdirectory = includeSubdirectory.substr(1);
+    if (!includeSubdirectory.empty() && (includeSubdirectory[includeSubdirectory.size() - 1] == '/'))
+        includeSubdirectory = includeSubdirectory.substr(0, includeSubdirectory.size() - 1);
+
+    for (const std::string & file : getFiles(baseDirectory + "/" + includeSubdirectory, recursive))
+    {
+        std::string extension = getExtension(file);
+
+        if (fileExtension != "*" && extension != fileExtension)
+            continue;
+
+        auto includePath = file.substr(baseDirectory.size());
+
+        NamedString::create(includePath, new File(file));
     }
 }
 

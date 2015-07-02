@@ -31,6 +31,11 @@ public:
     GenericPathTracingStage(const std::map<std::string, std::string> & namedExtensionShaderFiles = {});
     ~GenericPathTracingStage() override;
 
+    // set this before calling initialize()!
+    // defaults to the gloperate shader subfolder ("data/", containing the "pathtracing" subfolder)
+    void setShaderFilesRootDir(const std::string & dir);
+    const std::string & shaderFilesRootDir() const;
+
     virtual void initialize() override;
 
     // Path Tracing extension points
@@ -108,6 +113,7 @@ private:
 private:
     static const glm::uvec3 s_workGroupSize;
 
+    std::string m_shaderFilesRootDir;
     const std::map<std::string, std::string> m_namedExtensionShaders;
 
     bool m_sceneChanged;
