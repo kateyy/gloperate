@@ -4,7 +4,7 @@
 // implicit includes: 
 // #include </PATHTRACING_EXTENSIONS/geometryTraversal>
 
-const int NUM_SAMPLES = 10;
+const int NUM_SAMPLES = 3;
 
 vec4 shadowRayCast(in vec3 origin)
 {

@@ -69,11 +69,10 @@ void main()
         uint subpixel = frameCounter % numAntiAliasingFrames;
         uint x = subpixel % antiAliasingKernelSize;
         uint y = subpixel / antiAliasingKernelSize;
-        aliasing = vec2(ivec2(x, y)) / antiAliasingKernelSize + vec2(1.0 / 8.0);
-        // aliasing *= 2.0;
+        aliasing = vec2(ivec2(x, y)) / (antiAliasingKernelSize - 1) - 0.5;
     }
 
-    vec2 rayCoords = (vec2(pixelCoords + aliasing)+vec2(0.5)) / vec2(viewportSize);
+    vec2 rayCoords = (vec2(pixelCoords) + 0.5 + aliasing) / vec2(viewportSize);
 
     Camera camera = Camera_new(eye, rayMatrix, zNear, zFar);
     Ray ray = Camera_ray(camera, rayCoords);
