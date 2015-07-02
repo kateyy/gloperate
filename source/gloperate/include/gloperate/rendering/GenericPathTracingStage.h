@@ -70,8 +70,8 @@ private:
     gl::GLuint computeFirstOrderRays(const glm::uvec3 & workGroupCount);
     gl::GLuint computeSecondOrderRays(gl::GLuint depth, gl::GLuint numRays);
     void computeShadowRays(gl::GLuint depth, gl::GLuint numRays);
-    void flattenPath(gl::GLuint numStackLayers);
-    void aggregateColors();
+    void flattenPath(const glm::uvec3 & workGroupCount, gl::GLuint numStackLayers);
+    void aggregateColors(const glm::uvec3 & workGroupCount);
 
     static glm::uvec3 getSecondOrderRaysWorkgroupCount(gl::GLuint count, gl::GLuint * stride);
     void setupPathStack(gl::GLuint stackDepth, glm::uvec2 layerSize);

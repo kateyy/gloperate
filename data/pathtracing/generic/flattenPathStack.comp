@@ -4,6 +4,7 @@
 layout (local_size_x = 16, local_size_y = 16) in;
 
 #include </data/pathtracing/generic/dataTypes.glsl>
+#include </data/pathtracing/generic/sampling.glsl>
 
 #include </PATHTRACING_EXTENSIONS/geometryTraversal>
 #include </PATHTRACING_EXTENSIONS/materials>
@@ -14,6 +15,7 @@ layout (std430, binding = 1) readonly buffer PathStackDataBuffer
     PathStackData pathStackData[];
 };
 
+uniform uint frameCounter;
 uniform uint numStackLayers; // == 1 means ray casting, == 2 emits one second order ray ...
 uniform uvec2 layerSize;
 uniform uint layerStride;
@@ -24,7 +26,14 @@ layout (binding = 0, rgba32f) uniform image2D colorTexture;
 
 void main()
 {
-    ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
+    // coarse sampling / anti-aliasing: see sampling.glsl
+    bool coarseSamplingInit;
+    uint coarseSubSampleId = getCoarseSubSampleId(frameCounter, coarseSamplingInit);
+
+	CoarseSamplingWindow coarseWindow = coarseSamplingWindows[coarseSubSampleId];
+
+	// trace the origin of the coarse window (minimal coordinate)
+    ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy * coarseSamplingWindowSize + coarseWindow.origin);
     
     if (pixelCoords.x >= layerSize.x || pixelCoords.y >= layerSize.y)
         return;

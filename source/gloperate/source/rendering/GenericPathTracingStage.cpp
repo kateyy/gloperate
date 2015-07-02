@@ -39,7 +39,7 @@ const std::vector<std::string> s_extensions{
     "geometryTraversal", "secondOrderRayGeneration",
     "shadowRayCast" };
 
-const GLuint s_maxRayDepthDefault = 7;
+const GLuint s_maxRayDepthDefault = 3;
 const int s_coarseSamplingWindowSizeDefault = 1;
 const int s_coarseEndDefault = -1;
 
@@ -249,9 +249,9 @@ void GenericPathTracingStage::render()
         computeShadowRays(currentDepth, numRays);
     }
 
-    flattenPath(currentDepth);
+    flattenPath(workGroupCount, currentDepth);
 
-    aggregateColors();
+    aggregateColors(workGroupCount);
 
     unbindCommonObjects();
 }
@@ -322,10 +322,8 @@ void GenericPathTracingStage::computeShadowRays(gl::GLuint depth, gl::GLuint num
     globjects::Buffer::unbind(GL_SHADER_STORAGE_BUFFER, 2);
 }
 
-void GenericPathTracingStage::flattenPath(gl::GLuint numStackLayers)
+void GenericPathTracingStage::flattenPath(const glm::uvec3 & workGroupCount, gl::GLuint numStackLayers)
 {
-    glm::uvec3 workGroupCount(glm::ceil(glm::vec3(m_pathStackLayerExtent, 1) / glm::vec3(s_workGroupSize)));
-
     colorPerFrameTexture.data()->bindImageTexture(0, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
     bindPathStack(1);
@@ -341,10 +339,8 @@ void GenericPathTracingStage::flattenPath(gl::GLuint numStackLayers)
     globjects::Texture::unbindImageTexture(0);
 }
 
-void GenericPathTracingStage::aggregateColors()
+void GenericPathTracingStage::aggregateColors(const glm::uvec3 & workGroupCount)
 {
-    glm::uvec3 workGroupCount(glm::ceil(glm::vec3(m_pathStackLayerExtent, 1) / glm::vec3(s_workGroupSize)));
-
     colorPerFrameTexture.data()->bindImageTexture(0, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
     colorTexture.data()->bindImageTexture(1, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 
@@ -538,6 +534,7 @@ void GenericPathTracingStage::loadShaders()
     m_aggregateColorsProgram->attach(globjects::Shader::fromFile(
         GL_COMPUTE_SHADER, s_shader_path + "aggregateColors.comp"));
 
+    m_aggregateColorsProgram->link();
 }
 
 void GenericPathTracingStage::initializeExtensionShaders()

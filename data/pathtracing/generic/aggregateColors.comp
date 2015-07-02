@@ -21,13 +21,21 @@ void main()
 
 	CoarseSamplingWindow coarseWindow = coarseSamplingWindows[coarseSubSampleId];
 
-	// trace the origin of the coarse window (minimal coordinate)
     ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy * coarseSamplingWindowSize + coarseWindow.origin);
+    
+    if (pixelCoords.x >= layerSize.x || pixelCoords.y >= layerSize.y)
+        return;
 
 	if (coarseSamplingInit)
 	{
-        imageStore(aggregatedColorTexture, pixelCoords,
-            imageLoad(perFrameColorTexture, pixelCoords));
+		for (uint x = 0; x < coarseWindow.windowSize.x; ++x)
+		for (uint y = 0; y < coarseWindow.windowSize.y; ++y)
+        {
+			ivec2 windowPixel = ivec2(pixelCoords + uvec2(x, y));
+
+            imageStore(aggregatedColorTexture, windowPixel,
+                imageLoad(perFrameColorTexture, pixelCoords));
+        }
 	}
 	else
 	{

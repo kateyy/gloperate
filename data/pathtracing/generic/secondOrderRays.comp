@@ -74,24 +74,7 @@ void main()
         stackData.lightColor.xyz = ray.direction;
     }
 
-    bool coarseSamplingInit;
-    uint coarseSubSampleId = getCoarseSubSampleId(frameCounter, coarseSamplingInit);
-    
-	if (coarseSamplingInit)
-	{
-        CoarseSamplingWindow coarseWindow = coarseSamplingWindows[coarseSubSampleId];
 
-		for (uint x = 0; x < coarseWindow.windowSize.x; ++x)
-		for (uint y = 0; y < coarseWindow.windowSize.y; ++y)
-		{
-            uint index = pixelCoordsToIndex(ivec2(x, y), viewportSize);
-            pathStackData[index] = stackData;
-		}
-	}
-	else
-	{
-
-        uint index = pixelCoordsToIndex(inputRay.pixel, viewportSize);
-        pathStackData[index] = stackData;
-	}
+    uint index = pixelCoordsToIndex(inputRay.pixel, viewportSize);
+    pathStackData[index] = stackData;
 }

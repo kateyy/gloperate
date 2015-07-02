@@ -135,9 +135,6 @@ void main()
 			imageStore(normalTexture, windowPixel, vec4(normal, 1.0));
 			imageStore(depthTexture, windowPixel, vec4(depth));
             storeExtendedAttributes(windowPixel, rayHit, intersection);
-
-            uint index = pixelCoordsToIndex(windowPixel, viewportSize);
-            pathStackData[index] = stackData;
 		}
 	}
 	else
@@ -146,8 +143,8 @@ void main()
 		imageStore(normalTexture, pixelCoords, vec4(normal, 1.0));
 		imageStore(depthTexture, pixelCoords, vec4(depth));
         storeExtendedAttributes(pixelCoords, rayHit, intersection);
-
-        uint index = pixelCoordsToIndex(pixelCoords, viewportSize);
-        pathStackData[index] = stackData;
 	}
+
+    uint index = pixelCoordsToIndex(pixelCoords, viewportSize);
+    pathStackData[index] = stackData;
 }
